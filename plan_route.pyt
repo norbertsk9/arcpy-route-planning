@@ -181,3 +181,34 @@ def a_star_algorithm(start, end, adjacency_dict):
                 Q.add(i)
             n += 1
         iteration += 1
+
+def find_edges(route, edges_dict, end_node):
+    edges_set = set()
+    edges_dict_result = {}
+
+    for i in edges_dict:
+        if edges_dict[i].fr in route and edges_dict[i].fr != end_node:
+            index_start = route.index(edges_dict[i].fr)
+            if edges_dict[i].to == route[index_start + 1]:
+                if edges_dict[i].fr not in edges_dict_result.keys():
+                    edges_set.add(edges_dict[i].road_id)
+                    edges_dict_result[edges_dict[i].fr] = [edges_dict[i].road_id, edges_dict[i].cost]
+                if edges_dict[i].fr in edges_dict_result.keys() and edges_dict[i].cost < edges_dict_result[edges_dict[i].fr][1]:
+                    id_road = edges_dict_result[edges_dict[i].fr][0]
+                    edges_set.remove(id_road)
+                    edges_set.add(edges_dict[i].road_id)
+                    edges_dict_result[edges_dict[i].fr] = [edges_dict[i].road_id, edges_dict[i].cost]
+
+        if edges_dict[i].to in route and edges_dict[i].to != end_node:
+            index_start = route.index(edges_dict[i].to)
+            if edges_dict[i].fr == route[index_start + 1]:
+                if edges_dict[i].to not in edges_dict_result.keys():
+                    edges_set.add(edges_dict[i].road_id)
+                    edges_dict_result[edges_dict[i].to] = [edges_dict[i].road_id, edges_dict[i].cost]
+                if edges_dict[i].to in edges_dict_result.keys() and edges_dict[i].cost < edges_dict_result[edges_dict[i].to][1]:
+                    id_road = edges_dict_result[edges_dict[i].to][0]
+                    edges_set.remove(id_road)
+                    edges_set.add(edges_dict[i].road_id)
+                    edges_dict_result[edges_dict[i].to] = [edges_dict[i].road_id, edges_dict[i].cost]
+
+    return edges_set, edges_dict_result
