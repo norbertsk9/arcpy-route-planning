@@ -219,3 +219,35 @@ def export_to_shapefile(data, edges_str, output_path, output_name):
     arcpy.env.overwriteOutput = True
     arcpy.FeatureClassToFeatureClass_conversion(in_features, output_path, output_name, where_clause)
 
+def handle_traffic_jam(data, edges, start, end, output_path, output_name):
+    import random
+    edges_list = list(edges)
+
+    if 0 < len(edges_list) < 10:
+        selected_edge = random.choice(edges_list)
+        print("Traffic jam on road ID: " + str(selected_edge))
+        arcpy.AddMessage("Traffic jam on road ID: " + str(selected_edge))
+        edges[selected_edge].cost = edges[selected_edge].cost * 100000
+
+    if len(edges_list) >= 10:
+        selected_edge1 = random.choice(edges_list)
+        selected_edge2 = random.choice(edges_list)
+        selected_edge3 = random.choice(edges_list)
+
+        print("Traffic jam on road ID: " + str(selected_edge1))
+        arcpy.AddMessage("Traffic jam on road ID: " + str(selected_edge1))
+        print("Traffic jam on road ID: " + str(selected_edge2))
+        arcpy.AddMessage("Traffic jam on road ID: " + str(selected_edge2))
+        print("Traffic jam on road ID: " + str(selected_edge3))
+        arcpy.AddMessage("Traffic jam on road ID: " + str(selected_edge3))
+
+        edges[selected_edge1].cost = edges[selected_edge1].cost * 100000
+        edges[selected_edge2].cost = edges[selected_edge2].cost * 100000
+        edges[selected_edge3].cost = edges[selected_edge3].cost * 100000
+
+    adjacency_dict = adjacency_list()
+    a_star_algorithm(start, end, adjacency_dict)
+    _, edges_str = find_edges(start, end, edges)
+    output_name = output_name + "traffic_jam.shp"
+    export_to_shapefile(data, edges_str, output_path, output_name)
+    print(nodes[end].g)
