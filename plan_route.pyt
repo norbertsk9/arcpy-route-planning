@@ -40,6 +40,13 @@ def find_node(x, y, nodes_dict):
 def heuristic(x1, y1, x2, y2):
     return m.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
+nodes_dict = {}
+
+# Check if coordinates already exist in the dictionary
+def if_exists(x, y, nodes_dict):
+    if (x, y) in nodes_dict.keys():
+        return nodes_dict[(x, y)]
+    return -1
 
 def add_edge(road_id, start_x, start_y, end_x, end_y, length, direction, end_x_coord, end_y_coord):
     h1 = heuristic(start_x, start_y, end_x_coord, end_y_coord)
