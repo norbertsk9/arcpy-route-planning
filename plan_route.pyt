@@ -212,3 +212,10 @@ def find_edges(route, edges_dict, end_node):
                     edges_dict_result[edges_dict[i].to] = [edges_dict[i].road_id, edges_dict[i].cost]
 
     return edges_set, edges_dict_result
+
+def export_to_shapefile(data, edges_str, output_path, output_name):
+    in_features = data
+    where_clause = '"FID" IN ' + edges_str
+    arcpy.env.overwriteOutput = True
+    arcpy.FeatureClassToFeatureClass_conversion(in_features, output_path, output_name, where_clause)
+
