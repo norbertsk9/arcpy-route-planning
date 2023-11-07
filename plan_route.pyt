@@ -67,3 +67,17 @@ def add_edge(road_id, start_x, start_y, end_x, end_y, length, direction, end_x_c
 
     # Add edges
     edges[road_id] = Edge(node_from_id, node_to_id, length, road_id, direction)
+
+def cost_fastest(length, road_class):
+    average_speed = 0
+    if road_class == "A" or road_class == "S":
+        average_speed = 110
+    elif road_class == "G" or road_class == "GP":
+        average_speed = 80
+    elif road_class == "Z" or road_class == "L":
+        average_speed = 40
+    elif road_class == "I" or road_class == "D":
+        average_speed = 25
+
+    cost = round(((length / 1000) / average_speed) * 60, 2)
+    return cost
