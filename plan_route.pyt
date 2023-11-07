@@ -114,3 +114,19 @@ def load_graph(data, is_fastest, end_x_coord, end_y_coord):
                 add_edge(id, start_x, start_y, end_x, end_y, cost, direction, end_x_coord, end_y_coord)
 
             id += 1
+
+# Adjacency list
+def adjacency_list():
+    adjacency_dict = {}
+    for i in edges:
+        if edges[i].fr not in adjacency_dict.keys() and edges[i].direction != 2:
+            adjacency_dict[edges[i].fr] = []
+        if edges[i].direction != 2:
+            adjacency_dict[edges[i].fr].append(edges[i].to)
+            adjacency_dict[edges[i].fr].append(edges[i].cost)
+        if edges[i].to not in adjacency_dict.keys() and edges[i].direction != 1:
+            adjacency_dict[edges[i].to] = []
+        if edges[i].direction != 1:
+            adjacency_dict[edges[i].to].append(edges[i].fr)
+            adjacency_dict[edges[i].to].append(edges[i].cost)
+    return adjacency_dict
