@@ -130,3 +130,47 @@ def adjacency_list():
             adjacency_dict[edges[i].to].append(edges[i].fr)
             adjacency_dict[edges[i].to].append(edges[i].cost)
     return adjacency_dict
+
+def a_star_algorithm(start, end, adjacency_dict):
+    print("Calculating the best route using the A* algorithm")
+    arcpy.AddMessage("Calculating the best route using the A* algorithm")
+    min_heap = []
+    S = {start}
+    Q = set()
+    x = start
+
+    def min_f(q, s):
+        t = False
+        for i in q:
+            if i[1] not in s and not t:
+                new_node_nr = i[1]
+                min_f_val = i[0]
+                t = True
+            if i[1] not in s and t and i[0] < min_f_val:
+                min_f_val = i[0]
+                new_node_nr = i[1]
+        return new_node_nr, min_f_val
+
+    iteration = 0
+    while True:
+        if iteration != 0:
+            new_node_nr, min_f_val1 = min_f(min_heap, S)
+            S.add(new_node_nr)
+            x = new_node_nr
+            if new_node_nr == end:
+                break
+        n = 0
+        for i in adjacency_dict[x]:
+            if isinstance(i, int) and i not in S:
+                cost = adjacency_dict[x][n + 1]
+                if nodes[i].nr not in Q:
+                    nodes[i].g = nodes[x].g + cost
+                    nodes[i].f = nodes[i].h + nodes[i].g
+                    nodes[i].predecessor = x
+                if i in Q and nodes[x].g + cost < nodes[i].g:
+                    nodes[i].g = nodes[x].g + cost
+                    nodes[i].f = nodes[i].h + nodes[i].g
+                heapq.heappush(min_heap, (nodes[i].f, i))
+                Q.add(i)
+            n += 1
+        iteration += 1
