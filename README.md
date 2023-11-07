@@ -18,6 +18,11 @@ This toolbox simplifies route optimization and makes it accessible to ArcMap use
 - **Custom Output**: Choose an output path and name for the route layer.
 - **Traffic Jam Simulation (Optional)**: Simulate traffic jams on routes.
 
+[Toolbox Screenshot](img/toolbox_img.jpg)
+
+[Result of toolbox Screenshot](img/plan_route.jpg)
+*The green line represents the fastest route. The blue-colored roads are congested, and the red path is the fastest route, bypassing the congested roads marked in blue along the fastest route, so it had to detour those streets.*
+
 ## Getting Started
 
 ### Prerequisites
