@@ -81,3 +81,33 @@ def cost_fastest(length, road_class):
 
     cost = round(((length / 1000) / average_speed) * 60, 2)
     return cost
+
+def load_graph(data, is_fastest, end_x_coord, end_y_coord):
+    id = 0
+    print("Loading data")
+    arcpy.AddMessage("Loading data")
+    fields = ['FID', 'SHAPE@', 'roadClass', 'direction']
+
+    with arcpy.da.SearchCursor(data, fields) as cursor:
+        for row in cursor:
+            start_point = row[1].firstPoint
+            start_x = start_point.X
+            start_y = start_point.Y
+
+            end_point = row[1].lastPoint
+            end_x = end_point.X
+            end_y = end_point.Y
+
+            length = round(row[1].length, 2)
+            direction = row[3]
+            road_class = row[2]
+
+            if not is_fastest:
+                cost = length
+            else:
+                cost = cost_fastest(length, road_class)
+
+            if direction != 3:
+                add_edge(id, start_x, start_y, end_x, end_y, cost, direction, end_x_coord, end_y_coord)
+
+            id += 1
