@@ -26,6 +26,15 @@ class Edge:
     def __str__(self):
         return f"{self.road_id} {self.fr} {self.to} {self.cost} {self.direction}"
 
+def find_node(x, y, nodes_dict):
+    min_dist = m.sqrt((x - nodes_dict[0].x) ** 2 + (y - nodes_dict[0].y) ** 2)
+    nearest_id = 0
+    for i in nodes_dict:
+        dist = m.sqrt((x - nodes_dict[i].x) ** 2 + (y - nodes_dict[i].y) ** 2)
+        if dist < min_dist:
+            min_dist = dist
+            nearest_id = nodes_dict[i].nr
+    return nearest_id
 
 # Heuristic based on the Euclidean distance
 def heuristic(x1, y1, x2, y2):
