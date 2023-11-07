@@ -27,6 +27,11 @@ class Edge:
         return f"{self.road_id} {self.fr} {self.to} {self.cost} {self.direction}"
 
 
+# Heuristic based on the Euclidean distance
+def heuristic(x1, y1, x2, y2):
+    return m.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+
+
 def add_edge(road_id, start_x, start_y, end_x, end_y, length, direction, end_x_coord, end_y_coord):
     h1 = heuristic(start_x, start_y, end_x_coord, end_y_coord)
     h2 = heuristic(end_x, end_y, end_x_coord, end_y_coord)
