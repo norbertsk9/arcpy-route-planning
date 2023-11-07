@@ -251,3 +251,128 @@ def handle_traffic_jam(data, edges, start, end, output_path, output_name):
     output_name = output_name + "traffic_jam.shp"
     export_to_shapefile(data, edges_str, output_path, output_name)
     print(nodes[end].g)
+
+class Toolbox(object):
+    def __init__(self):
+        """Define the toolbox (the name of the toolbox is the name of the .pyt file)."""
+        self.label = "Toolbox"
+        self.alias = ""
+
+        # List of tool classes associated with this toolbox
+        self.tools = [Tool]
+
+class Tool(object):
+    def __init__(self):
+        """Define the tool (tool name is the name of the class)."""
+        self.label = "Find the most optimal route"
+        self.description = ""
+        self.canRunInBackground = False
+
+    def getParameterInfo(self):
+        """Define parameter definitions"""
+        in_features = arcpy.Parameter(
+            displayName="Road Layers:",
+            name="in_features",
+            datatype="DEShapefile",
+            parameterType="Required",
+            direction="Input",
+            multiValue=True
+        )
+
+        in_features.filter.list = ["Polyline"]
+
+        coord_start = arcpy.Parameter(
+            displayName='Enter the starting point coordinates:',
+            name='coord_start',
+            datatype='GPPoint',
+            parameterType='Required',
+            direction='Input'
+        )
+
+        coord_end = arcpy.Parameter(
+            displayName='Enter the ending point coordinates:',
+            name='coord_end',
+            datatype='GPPoint',
+            parameterType='Required',
+            direction='Input'
+        )
+
+        fastest_shortest = arcpy.Parameter(
+            displayName='Select the route type:',
+            name='fastest_shortest',
+            datatype='GPString',
+            parameterType='Required',
+            direction='Input'
+        )
+        fastest_shortest.filter.type = "ValueList"
+        fastest_shortest.filter.list = ['FASTEST', 'SHORTEST']
+
+        output_path = arcpy.Parameter(
+            displayName='Enter the output path for layers:',
+            name='output_path',
+            datatype='DEFolder',
+            parameterType='Required',
+            direction='Input'
+        )
+
+        output_name = arcpy.Parameter(
+            displayName='Enter the name of the route layer:',
+            name='output_name',
+            datatype='GPString',
+            parameterType='Required',
+            direction='Input'
+        )
+
+        traffic_jam = arcpy.Parameter(
+            displayName='Is there a traffic jam on this route?',
+            name='traffic_jam',
+            datatype='GPString',
+            parameterType='Optional',
+            direction='Input'
+        )
+        traffic_jam.filter.type = "ValueList"
+        traffic_jam.filter.list = ['YES', 'NO']
+
+        parameters = [in_features, coord_start, coord_end, fastest_shortest, output_path, output_name, traffic_jam]
+        return parameters
+
+    def isLicensed(self):
+        """Set whether tool is licensed to execute."""
+        return True
+
+    def updateParameters(self, parameters):
+        """Modify the values and properties of parameters before internal
+        validation is performed.  This method is called whenever a parameter
+        has been changed."""
+        return
+
+    def updateMessages(self, parameters):
+        """Modify the messages created by internal validation for each tool
+        parameter.  This method is called after internal validation."""
+        return
+    
+    def execute(self, parameters, messages):
+        try:
+            in_features = parameters[0].values
+            coord_start = parameters[1].value
+            coord_end = parameters[2].value
+            fastest_shortest = parameters[3].value
+            output_path = parameters[4].valueAsText
+            output_name = parameters[5].valueAsText
+            traffic_jam = parameters[6].value
+
+            load_graph(in_features, fastest_shortest == 'FASTEST', coord_end.X, coord_end.Y)
+
+            start = find_node(coord_start.X, coord_start.Y, nodes_dict)
+            end = find_node(coord_end.X, coord_end.Y, nodes_dict)
+
+            if traffic_jam == 'YES':
+                handle_traffic_jam(in_features, edges, start, end, output_path, output_name)
+            else:
+                adjacency_dict = adjacency_list()
+                a_star_algorithm(start, end, adjacency_dict)
+                _, edges_str = find_edges(start, end, edges)
+                export_to_shapefile(in_features, edges_str, output_path, output_name)
+
+        except Exception as e:
+            messages.addErrorMessage(f"An error occurred: {str(e)}")
