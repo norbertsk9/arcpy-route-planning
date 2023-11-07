@@ -82,6 +82,9 @@ def cost_fastest(length, road_class):
     cost = round(((length / 1000) / average_speed) * 60, 2)
     return cost
 
+nodes = {}
+edges = {}
+
 def load_graph(data, is_fastest, end_x_coord, end_y_coord):
     id = 0
     print("Loading data")
